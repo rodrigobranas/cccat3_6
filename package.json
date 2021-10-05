@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "tsc && jest ./dist",
+    "test": "tsc && jest ./dist --forceExit",
     "coverage": "tsc && jest ./dist --coverage"
   },
   "keywords": [],
@@ -13,6 +13,7 @@
   "dependencies": {
     "@types/jest": "^27.0.2",
     "jest": "^27.2.2",
+    "pg-promise": "^10.11.0",
     "typescript": "^4.4.3"
   }
 }
