@@ -1,12 +1,11 @@
 import SimulateFreightInput from "../../src/application/dto/SimulateFreightInput";
 import SimulateFreight from "../../src/application/usecase/SimulateFreight";
 import DatabaseConnectionAdapter from "../../src/infra/database/DatabaseConnectionAdapter";
-import ItemRepositoryDatabase from "../../src/infra/repository/database/ItemRepositoryDatabase";
+import DatabaseRepositoryFactory from "../../src/infra/factory/DatabaseRepositoryFactory";
 
 test("Deve simular o frete dos produtos", async function () {
 	const databaseConnection = new DatabaseConnectionAdapter()
-	const itemRepository = new ItemRepositoryDatabase(databaseConnection);
-	const simulateFreight = new SimulateFreight(itemRepository);
+	const simulateFreight = new SimulateFreight(new DatabaseRepositoryFactory(databaseConnection));
 	const input = new SimulateFreightInput([
 		{
 			idItem: 1,

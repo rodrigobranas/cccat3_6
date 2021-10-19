@@ -19,7 +19,6 @@ export default class Order {
     }
 
     addItem(item: Item, quantity: number) {
-        this.freight += item.getFreight() * quantity;
         this.orderItems.push(new OrderItem(item.idItem, item.price, quantity));
     }
 
@@ -31,6 +30,10 @@ export default class Order {
     getFreight () {
         return this.freight;
     }
+
+	setFreight (freight: number) {
+		this.freight = freight;
+	}
 
 	getCpf () {
 		return this.cpf.value;

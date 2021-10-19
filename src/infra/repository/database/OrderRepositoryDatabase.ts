@@ -1,3 +1,5 @@
+import Coupon from "../../../domain/entity/Coupon";
+import Item from "../../../domain/entity/Item";
 import Order from "../../../domain/entity/Order";
 import OrderRepository from "../../../domain/repository/OrderRepository";
 import DatabaseConnection from "../../database/DatabaseConnection";
@@ -8,27 +10,7 @@ export default class OrderRepositoryDatabase implements OrderRepository {
 	}
 
 	async save(order: Order): Promise<void> {
-		// begin
-		const [orderData] = await this.databaseConnection.query(`
-			insert into 
-				ccca.order 
-			(
-				code, cpf, issue_date, freight, sequence, coupon
-			) 
-			values 
-			(
-				$1, $2, $3, $4, $5, $6
-			) 
-			returning *`, 
-			[
-				order.getCode(), 
-				order.getCpf(), 
-				order.issueDate, 
-				order.getFreight(), 
-				order.sequence, 
-				order.getCoupon()
-			]
-		);
+		const [orderData] = await this.databaseConnection.query(`insert into ccca.order (code, cpf, issue_date, freight, sequence, coupon, total) values ($1, $2, $3, $4, $5, $6, $7) returning *`, [order.getCode(), order.getCpf(), order.issueDate, order.getFreight(), order.sequence, order.getCoupon(), order.getTotal()]);
 		for (const orderItem of order.getOrderItems()) {
 			await this.databaseConnection.query(`
 				insert into
@@ -46,6 +28,10 @@ export default class OrderRepositoryDatabase implements OrderRepository {
 				]
 			)
 		}
-		// commit
+	}
+
+	async count () {
+		const [data] = await this.databaseConnection.query("select count(*)::int from ccca.order", []);
+		return data.count;
 	}
 }

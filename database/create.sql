@@ -43,3 +43,5 @@ create table ccca.order_item (
 	quantity integer,
 	primary key (id_order, id_item)
 );
+
+create table ccca.order_view ( code text primary key, data jsonb);
