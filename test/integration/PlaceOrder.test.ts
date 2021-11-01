@@ -1,7 +1,7 @@
-import DatabaseConnectionAdapter from "../../src/infra/database/DatabaseConnectionAdapter";
-import PlaceOrder from "../../src/application/usecase/PlaceOrder";
-import PlaceOrderInput from "../../src/application/dto/PlaceOrderInput";
-import DatabaseRepositoryFactory from "../../src/infra/factory/DatabaseRepositoryFactory";
+import DatabaseConnectionAdapter from "../../src/checkout/infra/database/DatabaseConnectionAdapter";
+import PlaceOrder from "../../src/checkout/application/usecase/PlaceOrder";
+import PlaceOrderInput from "../../src/checkout/application/dto/PlaceOrderInput";
+import DatabaseRepositoryFactory from "../../src/checkout/infra/factory/DatabaseRepositoryFactory";
 
 let placeOrder: PlaceOrder;
 

@@ -1,4 +1,4 @@
-import Item from "../../src/domain/entity/Item";
+import Item from "../../src/checkout/domain/entity/Item";
 
 test("Deve criar um item", function () {
     const item = new Item(1, "Instrumentos Musicais", "Guitarra", 1000);
