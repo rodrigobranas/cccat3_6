@@ -30,6 +30,28 @@ export default class OrderRepositoryDatabase implements OrderRepository {
 		}
 	}
 
+	async get(code: string): Promise<Order> {
+		const [orderData] = await this.databaseConnection.query("select * from ccca.order where code = $1", [code]);
+		const order = new Order(orderData.cpf, orderData.issue_date, orderData.sequence);
+		const orderItemsData = await this.databaseConnection.query("select * from ccca.order_item where id_order = $1", [orderData.id]);
+		for (const orderItemData of orderItemsData) {
+			const [itemData] = await this.databaseConnection.query("select * from ccca.item where id = $1", [orderItemData.id_item]);
+			const item = new Item(itemData.id, itemData.category, itemData.description, itemData.price, itemData.width, itemData.height, itemData.length, itemData.weight);
+			order.addItem(item, orderItemData.quantity);
+		}
+		order.setFreight(orderData.freight);
+		const [couponData] = await this.databaseConnection.query("select * from ccca.coupon where code = $1", [orderData.coupon]);
+		if (couponData) {
+			const coupon = new Coupon(couponData.code, couponData.percentage, couponData.expire_date);
+			order.addCoupon(coupon);
+		}
+		return order;
+	}
+
+	async update(order: Order): Promise<void> {
+		await this.databaseConnection.query("update ccca.order set status = $1 where code = $2", [order.status, order.code]);
+	}
+
 	async count () {
 		const [data] = await this.databaseConnection.query("select count(*)::int from ccca.order", []);
 		return data.count;

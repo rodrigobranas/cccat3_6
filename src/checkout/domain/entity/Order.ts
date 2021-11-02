@@ -10,12 +10,14 @@ export default class Order {
     private orderItems: OrderItem[];
     private freight: number;
 	code: OrderCode;
+	status: string;
     
     constructor (cpf: string, readonly issueDate: Date = new Date(), readonly sequence: number = 1) {
         this.cpf = new Cpf(cpf);
         this.orderItems = [];
         this.freight = 0;
 		this.code = new OrderCode(issueDate, sequence);
+		this.status = "pending";
     }
 
     addItem(item: Item, quantity: number) {
@@ -49,6 +51,10 @@ export default class Order {
 
 	getOrderItems () {
 		return this.orderItems;
+	}
+
+	cancel () {
+		this.status = "cancelled";
 	}
 
     getTotal () {

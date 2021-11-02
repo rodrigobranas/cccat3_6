@@ -4,13 +4,15 @@ import PlaceOrderOutput from "../dto/PlaceOrderOutput";
 import PlaceOrderOutputAssembler from "../dto/PlaceOrderOutputAssembler";
 import AbstractRepositoryFactory from "../../domain/factory/AbstractRepositoryFactory";
 import FreightCalculator from "../../domain/service/FreightCalculator";
+import EventBus from "../../../shared/infra/event/EventBus";
+import OrderPlaced from "../../../shared/domain/event/OrderPlaced";
 
 export default class PlaceOrder {
 	itemRepository: any;
 	couponRepository: any;
 	orderRepository: any;
 
-    constructor (abstractRepositoryFactory: AbstractRepositoryFactory) {
+    constructor (abstractRepositoryFactory: AbstractRepositoryFactory, readonly eventBus: EventBus) {
 		this.itemRepository = abstractRepositoryFactory.createItemRepository();
 		this.couponRepository = abstractRepositoryFactory.createCouponRepository();
 		this.orderRepository = abstractRepositoryFactory.createOrderRepository();
@@ -31,6 +33,8 @@ export default class PlaceOrder {
 			order.addCoupon(coupon);
 		}
         await this.orderRepository.save(order);
+		const items = order.getOrderItems().map(orderItem => ({ idItem: orderItem.idItem, quantity: orderItem.quantity }));
+		await this.eventBus.publish(new OrderPlaced(order.code.value, items));
         return PlaceOrderOutputAssembler.assembly(order);
     }
 }

@@ -7,13 +7,16 @@ import CouponRepositoryDatabase from "../../src/checkout/infra/repository/databa
 import GetOrder from "../../src/checkout/application/query/GetOrder";
 import OrderDAODatabase from "../../src/checkout/infra/dao/OrderDAODatabase";
 import DatabaseRepositoryFactory from "../../src/checkout/infra/factory/DatabaseRepositoryFactory";
+import EventBus from "../../src/shared/infra/event/EventBus";
 
 let placeOrder: PlaceOrder;
 let getOrder: GetOrder;
 
 beforeEach(function () {
 	const databaseConnection = new DatabaseConnectionAdapter();
-	placeOrder = new PlaceOrder(new DatabaseRepositoryFactory(databaseConnection));
+	const databaseRepositoryFactory = new DatabaseRepositoryFactory(databaseConnection);
+	const eventBus = new EventBus();
+	placeOrder = new PlaceOrder(databaseRepositoryFactory, eventBus);
 	const orderDAO = new OrderDAODatabase(databaseConnection);
 	getOrder = new GetOrder(orderDAO);
 });

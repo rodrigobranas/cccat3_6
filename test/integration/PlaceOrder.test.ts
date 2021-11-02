@@ -2,12 +2,18 @@ import DatabaseConnectionAdapter from "../../src/checkout/infra/database/Databas
 import PlaceOrder from "../../src/checkout/application/usecase/PlaceOrder";
 import PlaceOrderInput from "../../src/checkout/application/dto/PlaceOrderInput";
 import DatabaseRepositoryFactory from "../../src/checkout/infra/factory/DatabaseRepositoryFactory";
+import EventBus from "../../src/shared/infra/event/EventBus";
+import OrderPlacedStockHandler from "../../src/stock/domain/handler/OrderPlacedStockHandler";
+import StockRepositoryDatabase from "../../src/stock/infra/repository/database/StockRepositoryDatabase";
 
 let placeOrder: PlaceOrder;
 
 beforeEach(function () {
 	const databaseConnection = new DatabaseConnectionAdapter();
-	placeOrder = new PlaceOrder(new DatabaseRepositoryFactory(databaseConnection));
+	const databaseRepositoryFactory = new DatabaseRepositoryFactory(databaseConnection);
+	const eventBus = new EventBus();
+	eventBus.subscribe("OrderPlaced", new OrderPlacedStockHandler(new StockRepositoryDatabase(databaseConnection)));
+	placeOrder = new PlaceOrder(databaseRepositoryFactory, eventBus);
 });
 
 test("Deve fazer um pedido", async function () {
